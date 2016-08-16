@@ -1,0 +1,24 @@
+#!/usr/bin/python
+
+"""
+ZetCode PyQt4 tutorial 
+
+This program creates a menubar. The
+menubar has one menu with an exit action.
+
+author: Jan Bodnar
+website: zetcode.com 
+last edited: August 2011
+"""
+
+import sys
+from PyQt4 import QtGui, QtCore
+from gui import SelectDatabaseWidget
+
+class ParametersDialog(QtGui.QDialog, SelectDatabaseWidget.Ui_Form):
+    def __init__(self, parent=None):
+        QtGui.QDialog.__init__(self, parent)
+        self.setupUi(self)
+        self.setModal(True)
+
+
