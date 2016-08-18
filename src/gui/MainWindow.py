@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindow.ui'
 #
-# Created: Tue Aug 16 21:14:01 2016
+# Created: Thu Aug 18 19:40:28 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -39,9 +39,9 @@ class Ui_MainWindow(object):
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         self.verticalLayout = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.listWidget = QtGui.QListWidget(self.scrollAreaWidgetContents)
-        self.listWidget.setObjectName(_fromUtf8("listWidget"))
-        self.verticalLayout.addWidget(self.listWidget)
+        self.tableView = QtGui.QTableView(self.scrollAreaWidgetContents)
+        self.tableView.setObjectName(_fromUtf8("tableView"))
+        self.verticalLayout.addWidget(self.tableView)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout_2.addWidget(self.scrollArea)
         MainWindow.setCentralWidget(self.centralwidget)

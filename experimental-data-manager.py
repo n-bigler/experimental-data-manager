@@ -13,14 +13,36 @@ last edited: August 2011
 """
 
 import sys
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtSql
 
 from src.gui import MainWindowWrap
 
+
 class ExperimentalDataManager():
     def __init__(self):
-        self.mainWindow = MainWindowWrap.MainWindowWrap()
+        #set up the database
+        self.createDB()
+        self.dbModel = QtSql.QSqlTableModel()
+        self.dbModel.setTable('data')
+        self.dbModel.select()
+        self.mainWindow = MainWindowWrap.MainWindowWrap(self.dbModel)
         self.mainWindow.show()
+
+
+    def createDB(self):
+        self.db = QtSql.QSqlDatabase.addDatabase('QSQLITE')
+        self.db.setDatabaseName('test.db')
+        if not self.db.open():
+            QtGui.QMessageBox.critical(None, QtGui.qApp.tr("Cannot open database"),
+                                       QtGui.qApp.tr("Unable to establish a database connection.\n"
+                                                     "This example needs SQLite support. Please read "
+                                                     "the Qt SQL driver documentation for information "
+                                                     "how to build it.\n\n" "Click Cancel to exit."),
+                                       QtGui.QMessageBox.Cancel)
+
+            return False
+        return True
+                
 
 def main():
     app = QtGui.QApplication(sys.argv)

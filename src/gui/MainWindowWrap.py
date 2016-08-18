@@ -17,20 +17,21 @@ from PyQt4 import QtGui, QtCore
 
 from src.gui import MainWindow, ParametersDialog
 
-class MainWindowWrap(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
-    def __init__(self):
+class MainWindowWrap(QtGui.QMainWindow):
+    def __init__(self, dbModel):
         super(self.__class__, self).__init__()
-        self.setupUi(self)
-        self.actionNew_Entry.setShortcut('Ctrl+N')
-        self.actionNew_Entry.triggered.connect(self.newEntry)
-        self.actionParameters.setShortcut('Ctrl+K')
-        self.actionParameters.triggered.connect(self.showParameters)
-        self.actionQuit.setShortcut('Ctrl+Q')
-        self.actionQuit.triggered.connect(QtGui.qApp.quit)
-        self.searchBar = QtGui.QLineEdit(self)
-        self.toolBar.addWidget(self.searchBar)
-        self.actionSearch.triggered.connect(self.search)
-        
+        self.ui = MainWindow.Ui_MainWindow()
+        self.ui.setupUi(self)
+        self.ui.actionNew_Entry.setShortcut('Ctrl+N')
+        self.ui.actionNew_Entry.triggered.connect(self.newEntry)
+        self.ui.actionParameters.setShortcut('Ctrl+K')
+        self.ui.actionParameters.triggered.connect(self.showParameters)
+        self.ui.actionQuit.setShortcut('Ctrl+Q')
+        self.ui.actionQuit.triggered.connect(QtGui.qApp.quit)
+        self.ui.searchBar = QtGui.QLineEdit(self.ui.toolBar)
+        self.ui.toolBar.addWidget(self.ui.searchBar)
+        self.ui.actionSearch.triggered.connect(self.search)
+        self.ui.tableView.setModel(dbModel)
 
         
     def newEntry(self):
@@ -41,6 +42,6 @@ class MainWindowWrap(QtGui.QMainWindow, MainWindow.Ui_MainWindow):
         parameterDialog.show()
         
     def search(self):
-        self.searchBar.setFocus()
+        self.ui.searchBar.setFocus()
 
         
