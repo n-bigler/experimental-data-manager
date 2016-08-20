@@ -25,13 +25,15 @@ class ExperimentalDataManager():
         self.dbModel = QtSql.QSqlTableModel()
         self.dbModel.setTable('data')
         self.dbModel.select()
+        
+        #set up the main window
         self.mainWindow = MainWindowWrap.MainWindowWrap(self.dbModel)
         self.mainWindow.show()
 
 
     def createDB(self):
         self.db = QtSql.QSqlDatabase.addDatabase('QSQLITE')
-        self.db.setDatabaseName('test.db')
+        self.db.setDatabaseName('data.db')
         if not self.db.open():
             QtGui.QMessageBox.critical(None, QtGui.qApp.tr("Cannot open database"),
                                        QtGui.qApp.tr("Unable to establish a database connection.\n"
