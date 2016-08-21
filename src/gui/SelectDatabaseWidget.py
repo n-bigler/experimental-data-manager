@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'SelectDatabaseWidget.ui'
 #
-# Created: Tue Aug 16 21:31:33 2016
+# Created: Sun Aug 21 13:51:59 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -69,22 +69,11 @@ class Ui_ParametersDialog(object):
         self.verticalLayout_2.addItem(spacerItem3)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.cancelButton = QtGui.QPushButton(ParametersDialog)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.cancelButton.sizePolicy().hasHeightForWidth())
-        self.cancelButton.setSizePolicy(sizePolicy)
-        self.cancelButton.setObjectName(_fromUtf8("cancelButton"))
-        self.horizontalLayout_2.addWidget(self.cancelButton)
-        self.okButton = QtGui.QPushButton(ParametersDialog)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.okButton.sizePolicy().hasHeightForWidth())
-        self.okButton.setSizePolicy(sizePolicy)
-        self.okButton.setObjectName(_fromUtf8("okButton"))
-        self.horizontalLayout_2.addWidget(self.okButton)
+        self.okCancelButtonBox = QtGui.QDialogButtonBox(ParametersDialog)
+        self.okCancelButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.okCancelButtonBox.setCenterButtons(True)
+        self.okCancelButtonBox.setObjectName(_fromUtf8("okCancelButtonBox"))
+        self.horizontalLayout_2.addWidget(self.okCancelButtonBox)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
 
         self.retranslateUi(ParametersDialog)
@@ -95,6 +84,4 @@ class Ui_ParametersDialog(object):
         self.titleLabel.setText(_translate("ParametersDialog", "Database", None))
         self.databaseURLLabel.setText(_translate("ParametersDialog", "Database URL:", None))
         self.browseButton.setText(_translate("ParametersDialog", "Browse...", None))
-        self.cancelButton.setText(_translate("ParametersDialog", "Cancel", None))
-        self.okButton.setText(_translate("ParametersDialog", "Ok", None))
 

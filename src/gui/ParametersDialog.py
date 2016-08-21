@@ -15,14 +15,45 @@ import sys
 from PyQt4 import QtGui, QtCore
 from src.gui import SelectDatabaseWidget
 
-class ParametersDialog(QtGui.QDialog, SelectDatabaseWidget.Ui_ParametersDialog):
-    def __init__(self, parent=None):
+class ParametersDialog(QtGui.QDialog):
+    def __init__(self, parent=None, currentPath='.'):
+        super(self.__class__, self).__init__()
         QtGui.QDialog.__init__(self, parent)
-        self.setupUi(self)
+
+        self.ui = SelectDatabaseWidget.Ui_ParametersDialog()
+        self.ui.setupUi(self)
         self.setModal(True)
-        self.browseButton.released.connect(self.browse)
+        self.ui.browseButton.released.connect(self.browse)
+        self.currentPath = currentPath;
+        # first initialize line edit with current path
+        self.ui.databaseURLLineEdit.setText(currentPath)
+        # then setup a slot for any edit of line edit
+        self.ui.databaseURLLineEdit.textChanged.connect(self.urlChanged)
+
+        #ok and cancel buttons
+        self.ui.okCancelButtonBox.accepted.connect(self.submit)
+        self.ui.okCancelButtonBox.rejected.connect(self.cancel)
+
+    def urlChanged(self, newURL):
+        self.currentPath = newURL
+
 
     def browse(self):
-        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/home')
+        dialog = QtGui.QFileDialog(self)
+        dialog.setFileMode(QtGui.QFileDialog.ExistingFile)
+        dialog.setDirectory(self.ui.databaseURLLineEdit.displayText())
+        if dialog.exec_():
+            files = dialog.selectedFiles()
+            self.ui.databaseURLLineEdit.setText(files.first())
 
+            
+    def getValues(self):
+        return self.currentPath
+        
+    def submit(self):
+        self.accept()
+        
+
+    def cancel(self):
+        self.reject()
 

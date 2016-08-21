@@ -13,15 +13,15 @@ last edited: August 2011
 """
 
 import sys
+
 from PyQt4 import QtGui, QtCore, QtSql
 
 from src.gui import MainWindow, ParametersDialog
+from src import Configuration
 
 class MainWindowWrap(QtGui.QMainWindow):
-    def __init__(self, dbModel):
+    def __init__(self):
         super(self.__class__, self).__init__()
-        self.dbModel = dbModel;
-        dbModel.setParent(self);
         self.ui = MainWindow.Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.actionNew_Entry.setShortcut('Ctrl+N')
@@ -34,21 +34,42 @@ class MainWindowWrap(QtGui.QMainWindow):
         self.ui.toolBar.addWidget(self.ui.searchBar)
         self.ui.actionSearch.triggered.connect(self.search)
         self.ui.searchBar.textChanged.connect(self.searchTextChanged)
+
+        # configuration
+        #look in configuration for db address
+        self.config = Configuration.Configuration()
+        #get the database path set in config
+        dbPath = self.config.getConfigDB()
+
+        # database
+        self.db = QtSql.QSqlDatabase.addDatabase('QSQLITE')
+
+        # Model for the central table view
+        self.dbModel = QtSql.QSqlTableModel(self, self.db)
         self.ui.tableView.setModel(self.dbModel)
+
+
+        if dbPath == "None":
+            self.showParameters()
+        else:
+            self.setDB(dbPath)
+            
 
         
     def newEntry(self):
         print('new entry')
 
     def showParameters(self):
-        parameterDialog = ParametersDialog.ParametersDialog(self)
-        parameterDialog.show()
+        parameterDialog = ParametersDialog.ParametersDialog(self, self.config.getConfigDB())
+        if parameterDialog.exec_():
+            # I won't end up here if user clicked cancel or the close button of the dialog
+            self.setDB(parameterDialog.getValues())
         
     def search(self):
         self.ui.searchBar.setFocus()
 
     def searchTextChanged(self, string):
-        if str(string) is '':
+        if str(string) == '':
             self.dbModel.setFilter('')
         else:
             query = QtSql.QSqlQuery()
@@ -64,6 +85,24 @@ class MainWindowWrap(QtGui.QMainWindow):
             self.dbModel.setFilter('rowid IN (%s)' % ','.join(idFound))#protect against injection?
 
 
+    def setDB(self, dbURL):
+        self.db.setDatabaseName(dbURL)
+        if not self.db.open():# fails silently if DB does not exist
+            QtGui.QMessageBox.critical(self, QtGui.qApp.tr("Cannot open database"),
+                                       QtGui.qApp.tr("Unable to establish a database connection.\n"
+                                                      "This example needs SQLite support. Please read "
+                                                     "the Qt SQL driver documentation for information "
+                                                     "how to build it."),
+                                       QtGui.QMessageBox.Ok)
+        else:
+            self.dbPath = dbURL
+            self.dbModel.setTable('data')
+            self.dbModel.select()
+            self.updateConfig()
+
+    def updateConfig(self):
+        self.config.setConfigDB(self.dbPath)
+        self.config.write()
             
         
         
