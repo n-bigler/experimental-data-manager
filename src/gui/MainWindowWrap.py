@@ -13,10 +13,10 @@ last edited: August 2011
 """
 
 import sys
-
+import pdb
 from PyQt4 import QtGui, QtCore, QtSql
 
-from src.gui import MainWindow, ParametersDialog
+from src.gui import MainWindow, ParametersDialog, EditEntryDialog
 from src import Configuration
 
 class MainWindowWrap(QtGui.QMainWindow):
@@ -47,6 +47,11 @@ class MainWindowWrap(QtGui.QMainWindow):
         # Model for the central table view
         self.dbModel = QtSql.QSqlTableModel(self, self.db)
         self.ui.tableView.setModel(self.dbModel)
+        self.ui.tableView.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.ui.tableView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.ui.tableView.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+        self.ui.tableView.doubleClicked.connect(self.viewEntry)
+
 
 
         if dbPath == "None":
@@ -105,8 +110,20 @@ class MainWindowWrap(QtGui.QMainWindow):
         self.config.write()
             
         
+    def viewEntry(self, ind):
+        selected = self.ui.tableView.selectionModel().selectedRows()
+        self.entryDialog = EditEntryDialog.EditEntryDialog()
+        self.entryDialog.retrieveValues(selected[0].data().toString())
+        self.entryDialog.displayValues()
         
+        if self.entryDialog.exec_():
+            print('accepted')
+        else:
+            print('rejected')
+
+
             
+
 
 
         
