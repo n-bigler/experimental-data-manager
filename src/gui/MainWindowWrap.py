@@ -1,19 +1,19 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 """
-ZetCode PyQt4 tutorial 
+ZetCode PyQt4 tutorial
 
 This program creates a menubar. The
 menubar has one menu with an exit action.
 
 author: Jan Bodnar
-website: zetcode.com 
+website: zetcode.com
 last edited: August 2011
 """
 
 import sys
 import pdb
+import sqlite3
 from PyQt4 import QtGui, QtCore, QtSql
 
 from src.gui import MainWindow, ParametersDialog, EditEntryDialog
@@ -39,7 +39,7 @@ class MainWindowWrap(QtGui.QMainWindow):
         #look in configuration for db address
         self.config = Configuration.Configuration()
         #get the database path set in config
-        dbPath = self.config.getConfigDB()
+        self.dbPath = self.config.getConfigDB()
 
         # database
         self.db = QtSql.QSqlDatabase.addDatabase('QSQLITE')
@@ -53,14 +53,13 @@ class MainWindowWrap(QtGui.QMainWindow):
         self.ui.tableView.doubleClicked.connect(self.viewEntry)
 
 
-
-        if dbPath == "None":
+        if self.dbPath == "None":
             self.showParameters()
         else:
-            self.setDB(dbPath)
-            
+            self.setDB(self.dbPath)
 
-        
+
+
     def newEntry(self):
         print('new entry')
 
@@ -69,7 +68,7 @@ class MainWindowWrap(QtGui.QMainWindow):
         if parameterDialog.exec_():
             # I won't end up here if user clicked cancel or the close button of the dialog
             self.setDB(parameterDialog.getValues())
-        
+
     def search(self):
         self.ui.searchBar.setFocus()
 
@@ -77,17 +76,30 @@ class MainWindowWrap(QtGui.QMainWindow):
         if str(string) == '':
             self.dbModel.setFilter('')
         else:
-            query = QtSql.QSqlQuery()
-            query.prepare('SELECT rowid FROM data_fts WHERE data_fts MATCH :searchstr')
-            query.bindValue(':searchstr', "'*"+string+"*'")
-            success = query.exec_()
+            if 0:
+                conn = sqlite3.connect(self.dbPath)
+                curr = conn.cursor()
+                curr.execute("SELECT rowid FROM data_fts WHERE data_fts MATCH ?", ("'*"+str(string)+"*'",))
+                ids = curr.fetchall()
+                idFound = []
+                for item in ids:
+                    idFound.append(str(item[0]))
 
-            idFound = []
+                self.dbModel.setFilter('rowid IN (%s)' % ','.join(idFound))#protect against injection?
+            else:
+                query = QtSql.QSqlQuery()
+                #query.prepare("SELECT rowid FROM data_fts WHERE data_fts MATCH :searchstr")
+                query.prepare(QtCore.QString("SELECT rowid FROM data_fts WHERE data_fts MATCH :searchstr"))
+                query.bindValue(':searchstr', "'*"+string+"*'")
+                success=query.exec_()
+                print(success)
+                idFound = []
 
-            while query.next():
-                idFound.append(str(query.value(0).toString()))
+                while query.next():
+                    idFound.append(str(query.value(0).toString()))
 
-            self.dbModel.setFilter('rowid IN (%s)' % ','.join(idFound))#protect against injection?
+                print(idFound)
+                self.dbModel.setFilter('rowid IN (%s)' % ','.join(idFound))#protect against injection?
 
 
     def setDB(self, dbURL):
@@ -108,22 +120,15 @@ class MainWindowWrap(QtGui.QMainWindow):
     def updateConfig(self):
         self.config.setConfigDB(self.dbPath)
         self.config.write()
-            
-        
+
+
     def viewEntry(self, ind):
         selected = self.ui.tableView.selectionModel().selectedRows()
         self.entryDialog = EditEntryDialog.EditEntryDialog()
         self.entryDialog.retrieveValues(selected[0].data().toString())
         self.entryDialog.displayValues()
-        
+
         if self.entryDialog.exec_():
             print('accepted')
         else:
             print('rejected')
-
-
-            
-
-
-
-        
