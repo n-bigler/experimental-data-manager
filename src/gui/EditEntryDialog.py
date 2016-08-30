@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+
+"""The edit entry dialog
+
+Shows a specific database entry and allows the user to modify it. It doesn't
+write to the database on its own but simply returns the new entry values.
+
+"""
 import sys
 from PyQt4 import QtGui, QtCore, QtSql
 from src.gui import Ui_ViewEntryDialog
@@ -44,7 +52,7 @@ class EditEntryDialog(QtGui.QDialog):
 
     def submit(self):
         self.accept()
-        
+
 
     def cancel(self):
         self.reject()

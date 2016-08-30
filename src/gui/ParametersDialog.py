@@ -1,14 +1,13 @@
 #!/usr/bin/python
 
-"""
-ZetCode PyQt4 tutorial 
+"""The dialog used to ask the user to enter the database path.
 
-This program creates a menubar. The
-menubar has one menu with an exit action.
+This will be the first window shown to the user if there is database path setup
+in the configuration file, or if there is no configuration file. Can also be
+called up from the file menu of the main window.
 
-author: Jan Bodnar
-website: zetcode.com 
-last edited: August 2011
+This dialog does not discuss with the model directly, it simply returns the new
+db path if the user click Ok.
 """
 
 import sys
@@ -46,14 +45,13 @@ class ParametersDialog(QtGui.QDialog):
             files = dialog.selectedFiles()
             self.ui.databaseURLLineEdit.setText(files.first())
 
-            
+
     def getValues(self):
         return self.currentPath
-        
+
     def submit(self):
         self.accept()
-        
+
 
     def cancel(self):
         self.reject()
-

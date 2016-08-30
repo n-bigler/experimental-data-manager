@@ -1,15 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-"""
-ZetCode PyQt4 tutorial 
+"""Application entry point
 
-This program creates a menubar. The
-menubar has one menu with an exit action.
-
-author: Jan Bodnar
-website: zetcode.com 
-last edited: August 2011
+Calls up the main window.
 """
 
 import sys
@@ -24,13 +18,13 @@ class ExperimentalDataManager():
     def __init__(self):
         #set up the database
 
-        
+
         #set up the main window
         self.mainWindow = MainWindowWrap.MainWindowWrap()
         self.mainWindow.show()
 
 
-                
+
 
 def main():
     app = QtGui.QApplication(sys.argv)
@@ -39,4 +33,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()    
+    main()

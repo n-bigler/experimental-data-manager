@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
 
-"""
-ZetCode PyQt4 tutorial
+"""The main app window
 
-This program creates a menubar. The
-menubar has one menu with an exit action.
-
-author: Jan Bodnar
-website: zetcode.com
-last edited: August 2011
+Manages most of the events as well as the connection to the DB.
 """
+
 
 import sys
 import pdb
