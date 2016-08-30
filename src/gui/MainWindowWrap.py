@@ -13,6 +13,7 @@ last edited: August 2011
 
 import sys
 import pdb
+import os
 import sqlite3
 from PyQt4 import QtGui, QtCore, QtSql
 
@@ -76,7 +77,7 @@ class MainWindowWrap(QtGui.QMainWindow):
         if str(string) == '':
             self.dbModel.setFilter('')
         else:
-            if 0:
+            if os.name == 'posix':#for some reason I can't run the QSqlQuery below on OS X.
                 conn = sqlite3.connect(self.dbPath)
                 curr = conn.cursor()
                 curr.execute("SELECT rowid FROM data_fts WHERE data_fts MATCH ?", ("'*"+str(string)+"*'",))
