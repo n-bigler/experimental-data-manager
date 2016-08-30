@@ -117,14 +117,20 @@ class MainWindowWrap(QtGui.QMainWindow):
         self.config.setConfigDB(self.dbPath)
         self.config.write()
 
+        
+    def getSelectedRow(self):
+        selected = self.ui.tableView.selectionModel().selectedRows()
+        return selected[0].data().toString()
+
+
 
     def viewEntry(self, ind):
-        selected = self.ui.tableView.selectionModel().selectedRows()
-        self.entryDialog = EditEntryDialog.EditEntryDialog()
-        self.entryDialog.retrieveValues(selected[0].data().toString())
-        self.entryDialog.displayValues()
+        entryDialog = EditEntryDialog.EditEntryDialog()
+        entryDialog.retrieveValues(self.getSelectedRow())
+        entryDialog.displayValues()
 
-        if self.entryDialog.exec_():
+        if entryDialog.exec_():
             print('accepted')
+            print(entryDialog.ui.projectLineEdit.text())
         else:
             print('rejected')
