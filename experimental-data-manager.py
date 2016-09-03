@@ -10,7 +10,7 @@ import sys
 import pdb
 from PyQt4 import QtGui, QtSql
 
-from src.gui import MainWindowWrap
+from src.gui import MainWindow
 
 
 
@@ -20,7 +20,7 @@ class ExperimentalDataManager():
 
 
         #set up the main window
-        self.mainWindow = MainWindowWrap.MainWindowWrap()
+        self.mainWindow = MainWindow.MainWindow()
         self.mainWindow.show()
 
 

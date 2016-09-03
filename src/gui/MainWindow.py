@@ -1,88 +1,136 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'MainWindow.ui'
-#
-# Created: Thu Aug 18 19:40:28 2016
-#      by: PyQt4 UI code generator 4.10.4
-#
-# WARNING! All changes made in this file will be lost!
+"""The main app window
 
-from PyQt4 import QtCore, QtGui
+Manages most of the events as well as the connection to the DB.
+"""
 
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
 
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+import sys
+import pdb
+import os
+import sqlite3
+from PyQt4 import QtGui, QtCore, QtSql
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(795, 602)
-        self.centralwidget = QtGui.QWidget(MainWindow)
-        self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        self.verticalLayout_2 = QtGui.QVBoxLayout(self.centralwidget)
-        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
-        self.scrollArea = QtGui.QScrollArea(self.centralwidget)
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
-        self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 775, 520))
-        self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
-        self.verticalLayout = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.tableView = QtGui.QTableView(self.scrollAreaWidgetContents)
-        self.tableView.setObjectName(_fromUtf8("tableView"))
-        self.verticalLayout.addWidget(self.tableView)
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-        self.verticalLayout_2.addWidget(self.scrollArea)
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 795, 25))
-        self.menubar.setObjectName(_fromUtf8("menubar"))
-        self.menuFile = QtGui.QMenu(self.menubar)
-        self.menuFile.setObjectName(_fromUtf8("menuFile"))
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtGui.QStatusBar(MainWindow)
-        self.statusbar.setObjectName(_fromUtf8("statusbar"))
-        MainWindow.setStatusBar(self.statusbar)
-        self.toolBar = QtGui.QToolBar(MainWindow)
-        self.toolBar.setObjectName(_fromUtf8("toolBar"))
-        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
-        self.actionNew_Entry = QtGui.QAction(MainWindow)
-        self.actionNew_Entry.setObjectName(_fromUtf8("actionNew_Entry"))
-        self.actionParameters = QtGui.QAction(MainWindow)
-        self.actionParameters.setObjectName(_fromUtf8("actionParameters"))
-        self.actionQuit = QtGui.QAction(MainWindow)
-        self.actionQuit.setObjectName(_fromUtf8("actionQuit"))
-        self.actionSearch = QtGui.QAction(MainWindow)
-        self.actionSearch.setObjectName(_fromUtf8("actionSearch"))
-        self.menuFile.addAction(self.actionNew_Entry)
-        self.menuFile.addAction(self.actionSearch)
-        self.menuFile.addAction(self.actionParameters)
-        self.menuFile.addSeparator()
-        self.menuFile.addAction(self.actionQuit)
-        self.menubar.addAction(self.menuFile.menuAction())
-        self.toolBar.addSeparator()
+from src.gui import MainWindow, ParametersDialog, EditEntryDialog
+from src import Configuration
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+class MainWindowWrap(QtGui.QMainWindow):
+    def __init__(self):
+        super(self.__class__, self).__init__()
+        self.ui = MainWindow.Ui_MainWindow()
+        self.ui.setupUi(self)
+        self.ui.actionNew_Entry.setShortcut('Ctrl+N')
+        self.ui.actionNew_Entry.triggered.connect(self.newEntry)
+        self.ui.actionParameters.setShortcut('Ctrl+K')
+        self.ui.actionParameters.triggered.connect(self.showParameters)
+        self.ui.actionQuit.setShortcut('Ctrl+Q')
+        self.ui.actionQuit.triggered.connect(QtGui.qApp.quit)
+        self.ui.searchBar = QtGui.QLineEdit(self.ui.toolBar)
+        self.ui.toolBar.addWidget(self.ui.searchBar)
+        self.ui.actionSearch.triggered.connect(self.search)
+        self.ui.searchBar.textChanged.connect(self.searchTextChanged)
 
-    def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
-        self.menuFile.setTitle(_translate("MainWindow", "File", None))
-        self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
-        self.actionNew_Entry.setText(_translate("MainWindow", "New Entry...", None))
-        self.actionParameters.setText(_translate("MainWindow", "Parameters...", None))
-        self.actionQuit.setText(_translate("MainWindow", "Quit", None))
-        self.actionSearch.setText(_translate("MainWindow", "Search", None))
-        self.actionSearch.setShortcut(_translate("MainWindow", "Ctrl+F", None))
+        # configuration
+        #look in configuration for db address
+        self.config = Configuration.Configuration()
+        #get the database path set in config
+        self.dbPath = self.config.getConfigDB()
 
+        # database
+        self.db = QtSql.QSqlDatabase.addDatabase('QSQLITE')
+
+        # Model for the central table view
+        self.dbModel = QtSql.QSqlTableModel(self, self.db)
+        self.ui.tableView.setModel(self.dbModel)
+        self.ui.tableView.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.ui.tableView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.ui.tableView.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+        self.ui.tableView.doubleClicked.connect(self.viewEntry)
+
+
+        if self.dbPath == "None":
+            self.showParameters()
+        else:
+            self.setDB(self.dbPath)
+
+
+
+    def newEntry(self):
+        print('new entry')
+
+    def showParameters(self):
+        parameterDialog = ParametersDialog.ParametersDialog(self, self.config.getConfigDB())
+        if parameterDialog.exec_():
+            # I won't end up here if user clicked cancel or the close button of the dialog
+            self.setDB(parameterDialog.getValues())
+
+    def search(self):
+        self.ui.searchBar.setFocus()
+
+    def searchTextChanged(self, string):
+        if str(string) == '':
+            self.dbModel.setFilter('')
+        else:
+            if os.name == 'posix':#for some reason I can't run the QSqlQuery below on OS X.
+                conn = sqlite3.connect(self.dbPath)
+                curr = conn.cursor()
+                curr.execute("SELECT rowid FROM data_fts WHERE data_fts MATCH ?", ("'*"+str(string)+"*'",))
+                ids = curr.fetchall()
+                idFound = []
+                for item in ids:
+                    idFound.append(str(item[0]))
+
+                self.dbModel.setFilter('rowid IN (%s)' % ','.join(idFound))#protect against injection?
+            else:
+                query = QtSql.QSqlQuery()
+                #query.prepare("SELECT rowid FROM data_fts WHERE data_fts MATCH :searchstr")
+                query.prepare(QtCore.QString("SELECT rowid FROM data_fts WHERE data_fts MATCH :searchstr"))
+                query.bindValue(':searchstr', "'*"+string+"*'")
+                success=query.exec_()
+                print(success)
+                idFound = []
+
+                while query.next():
+                    idFound.append(str(query.value(0).toString()))
+
+                print(idFound)
+                self.dbModel.setFilter('rowid IN (%s)' % ','.join(idFound))#protect against injection?
+
+
+    def setDB(self, dbURL):
+        self.db.setDatabaseName(dbURL)
+        if not self.db.open():# fails silently if DB does not exist
+            QtGui.QMessageBox.critical(self, QtGui.qApp.tr("Cannot open database"),
+                                       QtGui.qApp.tr("Unable to establish a database connection.\n"
+                                                      "This example needs SQLite support. Please read "
+                                                     "the Qt SQL driver documentation for information "
+                                                     "how to build it."),
+                                       QtGui.QMessageBox.Ok)
+        else:
+            self.dbPath = dbURL
+            self.dbModel.setTable('data')
+            self.dbModel.select()
+            self.updateConfig()
+
+    def updateConfig(self):
+        self.config.setConfigDB(self.dbPath)
+        self.config.write()
+
+        
+    def getSelectedRow(self):
+        selected = self.ui.tableView.selectionModel().selectedRows()
+        return selected[0].data().toString()
+
+
+
+    def viewEntry(self, ind):
+        entryDialog = EditEntryDialog.EditEntryDialog()
+        entryDialog.retrieveValues(self.getSelectedRow())
+        entryDialog.displayValues()
+
+        if entryDialog.exec_():
+            print('accepted')
+            print(entryDialog.ui.projectLineEdit.text())
+        else:
+            print('rejected')
