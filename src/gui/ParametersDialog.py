@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 """The dialog used to ask the user to enter the database path.
 
 This will be the first window shown to the user if there is database path setup
