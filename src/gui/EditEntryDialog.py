@@ -7,8 +7,10 @@ write to the database on its own but simply returns the new entry values.
 
 """
 import sys
+import subprocess
 from PyQt4 import QtGui, QtCore, QtSql
 from src.gui import Ui_ViewEntryDialog
+
 
 class EditEntryDialog(QtGui.QDialog):
     def __init__(self, parent=None, currentPath='.'):
@@ -18,7 +20,8 @@ class EditEntryDialog(QtGui.QDialog):
         self.ui = Ui_ViewEntryDialog.Ui_Dialog()
         self.ui.setupUi(self)
         self.ui.buttonBox.accepted.connect(self.submit)
-        self.ui.buttonBox.rejected.connect(self.cancel)
+        self.ui.buttonBox.button(QtGui.QDialogButtonBox.Discard).clicked.connect(self.cancel)
+        self.ui.buttonBox.button(QtGui.QDialogButtonBox.Open).clicked.connect(self.openFolder)
         self.date = ""
         self.project = ""
         self.path = ""
@@ -56,3 +59,12 @@ class EditEntryDialog(QtGui.QDialog):
 
     def cancel(self):
         self.reject()
+
+
+    def openFolder(self):
+        if sys.platform == 'darwin':
+            subprocess.Popen(['open', '-R', str(self.path)])
+        elif sys.platform == 'linux2':
+            subprocess.Popen(['xdg-open', str(self.path)])
+        elif sys.platform == 'win32':
+            subprocess.Popen(['explorer', str(self.path)])

@@ -12,13 +12,13 @@ import os
 import sqlite3
 from PyQt4 import QtGui, QtCore, QtSql
 
-from src.gui import MainWindow, ParametersDialog, EditEntryDialog
+from src.gui import Ui_MainWindow, ParametersDialog, EditEntryDialog, SearchReadMe
 from src import Configuration
 
-class MainWindowWrap(QtGui.QMainWindow):
+class MainWindow(QtGui.QMainWindow):
     def __init__(self):
         super(self.__class__, self).__init__()
-        self.ui = MainWindow.Ui_MainWindow()
+        self.ui = Ui_MainWindow.Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.actionNew_Entry.setShortcut('Ctrl+N')
         self.ui.actionNew_Entry.triggered.connect(self.newEntry)
@@ -30,6 +30,7 @@ class MainWindowWrap(QtGui.QMainWindow):
         self.ui.toolBar.addWidget(self.ui.searchBar)
         self.ui.actionSearch.triggered.connect(self.search)
         self.ui.searchBar.textChanged.connect(self.searchTextChanged)
+        self.ui.actionSearchReadMe.triggered.connect(self.showSearchReadMeDialog)
 
         # configuration
         #look in configuration for db address
@@ -126,11 +127,36 @@ class MainWindowWrap(QtGui.QMainWindow):
 
     def viewEntry(self, ind):
         entryDialog = EditEntryDialog.EditEntryDialog()
-        entryDialog.retrieveValues(self.getSelectedRow())
+        rowID = self.getSelectedRow()
+        entryDialog.retrieveValues(rowID)
         entryDialog.displayValues()
 
         if entryDialog.exec_():
-            print('accepted')
-            print(entryDialog.ui.projectLineEdit.text())
-        else:
-            print('rejected')
+            newProject = entryDialog.ui.projectLineEdit.text()
+            self.updateDB(newProject, rowID)
+
+
+    def updateDB(self, newProject, id):
+        query = QtSql.QSqlQuery()
+        sqlQuery = QtCore.QString("UPDATE data SET project=:project WHERE id=:id")
+        query.prepare(sqlQuery)
+        query.bindValue(':project', newProject)
+        query.bindValue(':id', id)
+        query.exec_()
+        query.lastQuery()
+        self.dbModel.submitAll()
+        self.dbModel.select()
+
+    def showSearchReadMeDialog(self):
+        searchRMDialog = SearchReadMe.SearchReadMe(self)
+        if searchRMDialog.exec_():
+            # I won't end up here if user clicked cancel or the close button of the dialog
+            self.searchReadMe(searchRMDialog.getValues())
+
+    def searchReadMe(self, rootFolder):
+        message = QtGui.QMessageBox()
+        message.setIcon(QtGui.QMessageBox.Critical)
+        message.setText("This functionality has not been implemented yet")
+        message.setWindowTitle("Not implemented")
+        message.setStandardButtons(QtGui.QMessageBox.Ok)
+        message.exec_()
