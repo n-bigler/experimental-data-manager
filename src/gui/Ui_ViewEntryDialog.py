@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'Ui_ViewEntryDialog.ui'
 #
-# Created: Sun Aug 28 18:26:01 2016
+# Created: Sat Sep  3 18:38:15 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -97,7 +97,7 @@ class Ui_Dialog(object):
         self.commentTextEdit.setObjectName(_fromUtf8("commentTextEdit"))
         self.verticalLayout.addWidget(self.commentTextEdit)
         self.buttonBox = QtGui.QDialogButtonBox(self.verticalLayoutWidget)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Discard|QtGui.QDialogButtonBox.Save)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Discard|QtGui.QDialogButtonBox.Open|QtGui.QDialogButtonBox.Save)
         self.buttonBox.setCenterButtons(True)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.verticalLayout.addWidget(self.buttonBox)
