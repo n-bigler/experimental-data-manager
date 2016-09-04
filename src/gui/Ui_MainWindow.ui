@@ -55,7 +55,7 @@
     <addaction name="actionNew_Entry"/>
     <addaction name="actionSearch"/>
     <addaction name="actionParameters"/>
-    <addaction name="actionSearchReadMe"/>
+    <addaction name="actionSync"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -97,9 +97,16 @@
     <string>Ctrl+F</string>
    </property>
   </action>
-  <action name="actionSearchReadMe">
+  <action name="actionSync">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../icons/sync.png</normaloff>../../icons/sync.png</iconset>
+   </property>
    <property name="text">
-    <string>Search ReadMe...</string>
+    <string>Sync...</string>
+   </property>
+   <property name="toolTip">
+    <string>Sync</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>

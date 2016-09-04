@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'Ui_MainWindow.ui'
 #
-# Created: Sat Sep  3 18:23:08 2016
+# Created: Sun Sep  4 20:17:07 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -65,12 +65,15 @@ class Ui_MainWindow(object):
         self.actionQuit.setObjectName(_fromUtf8("actionQuit"))
         self.actionSearch = QtGui.QAction(MainWindow)
         self.actionSearch.setObjectName(_fromUtf8("actionSearch"))
-        self.actionSearchReadMe = QtGui.QAction(MainWindow)
-        self.actionSearchReadMe.setObjectName(_fromUtf8("actionSearchReadMe"))
+        self.actionSync = QtGui.QAction(MainWindow)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8("../../icons/sync.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionSync.setIcon(icon)
+        self.actionSync.setObjectName(_fromUtf8("actionSync"))
         self.menuFile.addAction(self.actionNew_Entry)
         self.menuFile.addAction(self.actionSearch)
         self.menuFile.addAction(self.actionParameters)
-        self.menuFile.addAction(self.actionSearchReadMe)
+        self.menuFile.addAction(self.actionSync)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionQuit)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -88,6 +91,7 @@ class Ui_MainWindow(object):
         self.actionQuit.setText(_translate("MainWindow", "Quit", None))
         self.actionSearch.setText(_translate("MainWindow", "Search", None))
         self.actionSearch.setShortcut(_translate("MainWindow", "Ctrl+F", None))
-        self.actionSearchReadMe.setText(_translate("MainWindow", "Search ReadMe...", None))
-        self.actionSearchReadMe.setShortcut(_translate("MainWindow", "Ctrl+H", None))
+        self.actionSync.setText(_translate("MainWindow", "Sync...", None))
+        self.actionSync.setToolTip(_translate("MainWindow", "Sync", None))
+        self.actionSync.setShortcut(_translate("MainWindow", "Ctrl+H", None))
 

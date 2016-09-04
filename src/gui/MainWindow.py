@@ -26,11 +26,14 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.actionParameters.triggered.connect(self.showParameters)
         self.ui.actionQuit.setShortcut('Ctrl+Q')
         self.ui.actionQuit.triggered.connect(QtGui.qApp.quit)
+        self.ui.toolBar.addAction(self.ui.actionSync)
+        self.ui.actionSync.setIcon(QtGui.QIcon("icons/sync.png")) # TODO: Shouldn't this be set by the designer?
         self.ui.searchBar = QtGui.QLineEdit(self.ui.toolBar)
         self.ui.toolBar.addWidget(self.ui.searchBar)
         self.ui.actionSearch.triggered.connect(self.search)
         self.ui.searchBar.textChanged.connect(self.searchTextChanged)
-        self.ui.actionSearchReadMe.triggered.connect(self.showSearchReadMeDialog)
+        self.ui.actionSync.triggered.connect(self.showSearchReadMeDialog)
+
 
         # configuration
         #look in configuration for db address
