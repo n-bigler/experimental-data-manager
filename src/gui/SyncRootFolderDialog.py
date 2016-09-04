@@ -3,14 +3,14 @@
 
 import sys
 from PyQt4 import QtGui, QtCore
-from src.gui import Ui_SearchReadMe
+from src.gui import Ui_SyncRootFolderDialog
 
-class SearchReadMe(QtGui.QDialog):
+class SyncRootFolderDialog(QtGui.QDialog):
     def __init__(self, parent=None, currentPath='.'):
         super(self.__class__, self).__init__()
         QtGui.QDialog.__init__(self, parent)
 
-        self.ui = Ui_SearchReadMe.Ui_SearchReadMeDialog()
+        self.ui = Ui_SyncRootFolderDialog.Ui_SyncRootFolderDialog()
         self.ui.setupUi(self)
         self.setModal(True)
         self.ui.browseButton.released.connect(self.browse)

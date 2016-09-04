@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'Ui_SearchReadMe.ui'
+# Form implementation generated from reading ui file 'Ui_SyncRootFolderDialog.ui'
 #
-# Created: Sat Sep  3 17:47:30 2016
+# Created: Sun Sep  4 20:29:35 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,18 +23,18 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-class Ui_SearchReadMeDialog(object):
-    def setupUi(self, SearchReadMeDialog):
-        SearchReadMeDialog.setObjectName(_fromUtf8("SearchReadMeDialog"))
-        SearchReadMeDialog.setWindowModality(QtCore.Qt.NonModal)
-        SearchReadMeDialog.resize(533, 424)
-        self.verticalLayout_2 = QtGui.QVBoxLayout(SearchReadMeDialog)
+class Ui_SyncRootFolderDialog(object):
+    def setupUi(self, SyncRootFolderDialog):
+        SyncRootFolderDialog.setObjectName(_fromUtf8("SyncRootFolderDialog"))
+        SyncRootFolderDialog.setWindowModality(QtCore.Qt.NonModal)
+        SyncRootFolderDialog.resize(533, 424)
+        self.verticalLayout_2 = QtGui.QVBoxLayout(SyncRootFolderDialog)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem)
-        self.titleLabel = QtGui.QLabel(SearchReadMeDialog)
+        self.titleLabel = QtGui.QLabel(SyncRootFolderDialog)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -55,13 +55,13 @@ class Ui_SearchReadMeDialog(object):
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setSpacing(4)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.databaseURLLabel = QtGui.QLabel(SearchReadMeDialog)
+        self.databaseURLLabel = QtGui.QLabel(SyncRootFolderDialog)
         self.databaseURLLabel.setObjectName(_fromUtf8("databaseURLLabel"))
         self.horizontalLayout.addWidget(self.databaseURLLabel)
-        self.rootFolderURLLineEdit = QtGui.QLineEdit(SearchReadMeDialog)
+        self.rootFolderURLLineEdit = QtGui.QLineEdit(SyncRootFolderDialog)
         self.rootFolderURLLineEdit.setObjectName(_fromUtf8("rootFolderURLLineEdit"))
         self.horizontalLayout.addWidget(self.rootFolderURLLineEdit)
-        self.browseButton = QtGui.QPushButton(SearchReadMeDialog)
+        self.browseButton = QtGui.QPushButton(SyncRootFolderDialog)
         self.browseButton.setObjectName(_fromUtf8("browseButton"))
         self.horizontalLayout.addWidget(self.browseButton)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
@@ -69,19 +69,19 @@ class Ui_SearchReadMeDialog(object):
         self.verticalLayout_2.addItem(spacerItem3)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.okCancelButtonBox = QtGui.QDialogButtonBox(SearchReadMeDialog)
+        self.okCancelButtonBox = QtGui.QDialogButtonBox(SyncRootFolderDialog)
         self.okCancelButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.okCancelButtonBox.setCenterButtons(True)
         self.okCancelButtonBox.setObjectName(_fromUtf8("okCancelButtonBox"))
         self.horizontalLayout_2.addWidget(self.okCancelButtonBox)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
 
-        self.retranslateUi(SearchReadMeDialog)
-        QtCore.QMetaObject.connectSlotsByName(SearchReadMeDialog)
+        self.retranslateUi(SyncRootFolderDialog)
+        QtCore.QMetaObject.connectSlotsByName(SyncRootFolderDialog)
 
-    def retranslateUi(self, SearchReadMeDialog):
-        SearchReadMeDialog.setWindowTitle(_translate("SearchReadMeDialog", "Form", None))
-        self.titleLabel.setText(_translate("SearchReadMeDialog", "Search for new ReadMe", None))
-        self.databaseURLLabel.setText(_translate("SearchReadMeDialog", "Root folder:", None))
-        self.browseButton.setText(_translate("SearchReadMeDialog", "Browse...", None))
+    def retranslateUi(self, SyncRootFolderDialog):
+        SyncRootFolderDialog.setWindowTitle(_translate("SyncRootFolderDialog", "Form", None))
+        self.titleLabel.setText(_translate("SyncRootFolderDialog", "Search for new ReadMe", None))
+        self.databaseURLLabel.setText(_translate("SyncRootFolderDialog", "Root folder:", None))
+        self.browseButton.setText(_translate("SyncRootFolderDialog", "Browse...", None))
 

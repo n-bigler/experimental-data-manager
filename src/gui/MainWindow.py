@@ -12,7 +12,7 @@ import os
 import sqlite3
 from PyQt4 import QtGui, QtCore, QtSql
 
-from src.gui import Ui_MainWindow, ParametersDialog, EditEntryDialog, SearchReadMe
+from src.gui import Ui_MainWindow, ParametersDialog, EditEntryDialog, SyncRootFolderDialog
 from src import Configuration
 
 class MainWindow(QtGui.QMainWindow):
@@ -32,7 +32,7 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.toolBar.addWidget(self.ui.searchBar)
         self.ui.actionSearch.triggered.connect(self.search)
         self.ui.searchBar.textChanged.connect(self.searchTextChanged)
-        self.ui.actionSync.triggered.connect(self.showSearchReadMeDialog)
+        self.ui.actionSync.triggered.connect(self.showSyncRootFolderDialog)
 
 
         # configuration
@@ -150,11 +150,11 @@ class MainWindow(QtGui.QMainWindow):
         self.dbModel.submitAll()
         self.dbModel.select()
 
-    def showSearchReadMeDialog(self):
-        searchRMDialog = SearchReadMe.SearchReadMe(self)
-        if searchRMDialog.exec_():
+    def showSyncRootFolderDialog(self):
+        syncRFDialog = SyncRootFolderDialog.SyncRootFolderDialog(self)
+        if syncRFDialog.exec_():
             # I won't end up here if user clicked cancel or the close button of the dialog
-            self.searchReadMe(searchRMDialog.getValues())
+            self.searchReadMe(syncRFDialog.getValues())
 
     def searchReadMe(self, rootFolder):
         message = QtGui.QMessageBox()

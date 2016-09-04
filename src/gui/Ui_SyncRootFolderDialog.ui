@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SearchReadMeDialog</class>
- <widget class="QWidget" name="SearchReadMeDialog">
+ <class>SyncRootFolderDialog</class>
+ <widget class="QWidget" name="SyncRootFolderDialog">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
