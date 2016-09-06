@@ -7,7 +7,7 @@ from PyQt4.QtGui import QApplication
 from PyQt4.QtTest import QTest
 from PyQt4.QtCore import Qt
 from PyQt4 import QtSql
-from ..gui import MainWindowWrap
+from ..gui import MainWindow
 
 
 
@@ -17,7 +17,7 @@ class SearchBarTests(unittest.TestCase):
     def setUpClass(cls):
 
         super(SearchBarTests, cls).setUpClass()
-        cls._mainWindow = MainWindowWrap.MainWindowWrap()
+        cls._mainWindow = MainWindow.MainWindow()
         cls._mainWindow.setDB('src/tests/dataTests.db')
 
 
