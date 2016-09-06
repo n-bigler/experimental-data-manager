@@ -76,7 +76,7 @@ class MainWindow(QtGui.QMainWindow):
         if str(string) == '':
             self.dbModel.setFilter('')
         else:
-            if os.name == 'posix':#for some reason I can't run the QSqlQuery below on OS X.
+            if  sys.platform != 'linux2':#for some reason I can't run the QSqlQuery below on OS X.
                 conn = sqlite3.connect(self.dbPath)
                 curr = conn.cursor()
                 curr.execute("SELECT rowid FROM data_fts WHERE data_fts MATCH ?", ("'*"+str(string)+"*'",))
@@ -121,7 +121,7 @@ class MainWindow(QtGui.QMainWindow):
         self.config.setConfigDB(self.dbPath)
         self.config.write()
 
-        
+
     def getSelectedRow(self):
         selected = self.ui.tableView.selectionModel().selectedRows()
         return selected[0].data().toString()
