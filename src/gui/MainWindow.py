@@ -5,14 +5,17 @@
 Manages most of the events as well as the connection to the DB.
 """
 
-
+from __future__ import unicode_literals
 import sys
 import pdb
 import os
+import glob
+import fnmatch
 import sqlite3
+import re
 from PyQt4 import QtGui, QtCore, QtSql
 
-from src.gui import Ui_MainWindow, ParametersDialog, EditEntryDialog, SyncRootFolderDialog
+from src.gui import Ui_MainWindow, ParametersDialog, EditEntryDialog, SyncRootFolderDialog, SearchReadMeDialog
 from src import Configuration
 
 class MainWindow(QtGui.QMainWindow):
@@ -157,9 +160,49 @@ class MainWindow(QtGui.QMainWindow):
             self.searchReadMe(syncRFDialog.getValues())
 
     def searchReadMe(self, rootFolder):
-        message = QtGui.QMessageBox()
-        message.setIcon(QtGui.QMessageBox.Critical)
-        message.setText("This functionality has not been implemented yet")
-        message.setWindowTitle("Not implemented")
-        message.setStandardButtons(QtGui.QMessageBox.Ok)
-        message.exec_()
+        dialog = SearchReadMeDialog.SearchReadMeDialog(self)
+        dialog.setModal(True)
+        dialog.show()
+        filenames = []
+        dir_path = rootFolder.rstrip('/')
+
+        dialog.writeLine("Starting recursive walk")
+        dialog.writeLine("Searching for ReadMe...")
+
+        # walk recursively
+        for root, dirnames, fnames in os.walk(dir_path):
+            for fname in fnmatch.filter(fnames, '[Rr]ead[Mm]e.txt'):
+                filenames.append(os.path.join(root, fname))
+                dialog.writeLine('ReadMe found: ' + filenames[-1])
+
+        dialog.writeLine("Walked through the whole tree")
+        dialog.writeLine("Parsing files...")
+        for fileCurr in filenames:
+            try:
+                f = open(fileCurr, 'r')
+            except IOError:
+                dialog.writeLine('Could not open ' + fileCurr)
+
+            with f:
+                dialog.writeLine('Processing ' + fileCurr)
+                dat = self.parseFile(f)
+                # clean up the text
+                dat.update({key: val.rstrip('\n') for key, val in dat.items()})
+
+        
+
+    def parseFile(self, f):
+        dat = {}
+        header_re = re.compile(r'^ *#+ *([^\n]+?) *#* *(?:\n+|$)', flags=re.UNICODE)
+        header_name = ''
+        for line in f:
+            match = header_re.match(line.decode('utf-8'))
+            if match: # we are at a header of a section
+                header_name = match.group(1).decode('utf-8')
+                dat[header_name] = ''
+            else:
+                if header_name != '': # we are in a section
+                    dat[header_name] += line.decode('utf-8')
+        return dat
+
+
