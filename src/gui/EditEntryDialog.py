@@ -43,7 +43,7 @@ class EditEntryDialog(QtGui.QDialog):
             self.project = query.value(1).toString()
             self.path = query.value(2).toString()
             self.measurement = query.value(3).toString()
-            self.comment = query.value(3).toString()
+            self.comment = query.value(4).toString()
 
 
     def displayValues(self):
