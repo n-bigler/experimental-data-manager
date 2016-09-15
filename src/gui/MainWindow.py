@@ -159,50 +159,54 @@ class MainWindow(QtGui.QMainWindow):
             # I won't end up here if user clicked cancel or the close button of the dialog
             self.searchReadMe(syncRFDialog.getValues())
 
+
     def searchReadMe(self, rootFolder):
-        dialog = SearchReadMeDialog.SearchReadMeDialog(self)
-        dialog.setModal(True)
-        dialog.show()
-        filenames = []
-        dir_path = rootFolder.rstrip('/')
+        dialog = SearchReadMeDialog.SearchReadMeDialog(self, rootFolder)
+        dialog.exec_()
+        entriesFound = dialog.getValues()
+        for entry in entriesFound:
+            self.addToDB(entry)
 
-        dialog.writeLine("Starting recursive walk")
-        dialog.writeLine("Searching for ReadMe...")
+    def addToDB(self, dat):
+        query = QtSql.QSqlQuery()
+        query.prepare(QtCore.QString("SELECT id FROM data WHERE path=:path"))
+        print(dat['path'])
+        query.bindValue(':path', dat['path'])
+        query.exec_()
+        idFound = []
 
-        # walk recursively
-        for root, dirnames, fnames in os.walk(dir_path):
-            for fname in fnmatch.filter(fnames, '[Rr]ead[Mm]e.txt'):
-                filenames.append(os.path.join(root, fname))
-                dialog.writeLine('ReadMe found: ' + filenames[-1])
-
-        dialog.writeLine("Walked through the whole tree")
-        dialog.writeLine("Parsing files...")
-        for fileCurr in filenames:
-            try:
-                f = open(fileCurr, 'r')
-            except IOError:
-                dialog.writeLine('Could not open ' + fileCurr)
-
-            with f:
-                dialog.writeLine('Processing ' + fileCurr)
-                dat = self.parseFile(f)
-                # clean up the text
-                dat.update({key: val.rstrip('\n') for key, val in dat.items()})
-
+        while query.next():
+            idFound.append(str(query.value(0).toString()))
+        print(idFound)
         
+        entry = (dat['Date'], dat['Project'], dat['path'], dat['Measurement'], dat['Comment']) # already unicode
+        # we check if the record exists in the DB
+        if len(idFound) == 0:
+            # we write a new record to the DB
+            query = QtSql.QSqlQuery()
+            sqlQuery = QtCore.QString("INSERT INTO data(date, project, path, measurement, comment) VALUES (:date,:project,:path,:measurement,:comment)")
+            query.prepare(sqlQuery)
+            query.bindValue(':date', dat['Date'])
+            query.bindValue(':project', dat['Project'])
+            query.bindValue(':path', dat['path'])
+            query.bindValue(':measurement', dat['Measurement'])
+            query.bindValue(':comment', dat['Comment'])
+            query.exec_()
+            print("Added to DB: ")
+            print(dat)
 
-    def parseFile(self, f):
-        dat = {}
-        header_re = re.compile(r'^ *#+ *([^\n]+?) *#* *(?:\n+|$)', flags=re.UNICODE)
-        header_name = ''
-        for line in f:
-            match = header_re.match(line.decode('utf-8'))
-            if match: # we are at a header of a section
-                header_name = match.group(1).decode('utf-8')
-                dat[header_name] = ''
-            else:
-                if header_name != '': # we are in a section
-                    dat[header_name] += line.decode('utf-8')
-        return dat
 
+        else:
+            # we need to update one record
+            query = QtSql.QSqlQuery()
+            sqlQuery = QtCore.QString("UPDATE data SET date=:date, project=:project, measurement=:measurement, comment=:coment WHERE id=:id")
+            query.prepare(sqlQuery)
+            query.bindValue(':date', dat['Date'])
+            query.bindValue(':project', dat['Project'])
+            query.bindValue(':path', dat['path'])
+            query.bindValue(':measurement', dat['Measurement'])
+            query.bindValue(':comment', dat['Comment'])
+            query.exec_()
+            print("Updated: ")
+            print(dat)
 
