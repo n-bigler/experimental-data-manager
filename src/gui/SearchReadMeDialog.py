@@ -31,7 +31,7 @@ class SearchReadMeDialog(QtGui.QDialog):
 
     def searchReadMe(self, rootFolder):
         filenames = []
-        dir_path = rootFolder.rstrip('/')
+        dir_path = str(rootFolder).rstrip('/')
 
         self.writeLine("Starting recursive walk")
         self.writeLine("Searching for ReadMe...")

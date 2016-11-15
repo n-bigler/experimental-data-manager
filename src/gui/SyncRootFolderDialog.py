@@ -33,9 +33,9 @@ class SyncRootFolderDialog(QtGui.QDialog):
         dialog = QtGui.QFileDialog(self)
         dialog.setFileMode(QtGui.QFileDialog.Directory)
         dialog.setOption(QtGui.QFileDialog.ShowDirsOnly, True)
-        dialog.setDirectory(self.ui.databaseURLLineEdit.displayText())
+        dialog.setDirectory(self.ui.rootFolderURLLineEdit.displayText())
         if dialog.exec_():
-            files = dialog.selectedFile()
+            files = dialog.selectedFiles()
             self.ui.rootFolderURLLineEdit.setText(files.first())
 
 
