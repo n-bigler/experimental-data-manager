@@ -14,7 +14,7 @@ class SearchReadMeDialog(QtGui.QDialog):
     def __init__(self, parent=None, rootFolder='.'):
         super(self.__class__, self).__init__()
         QtGui.QDialog.__init__(self, parent)
-        
+
         self.ui = Ui_SearchReadMeDialog.Ui_Ui_SearchReadMeDialog()
         self.ui.setupUi(self)
 
@@ -22,7 +22,7 @@ class SearchReadMeDialog(QtGui.QDialog):
         self.dat = []
         self.searchReadMe(rootFolder)
 
-        
+
     def writeLine(self, line):
         self.ui.plainTextEdit.appendPlainText(line)
 
@@ -54,9 +54,16 @@ class SearchReadMeDialog(QtGui.QDialog):
                 self.writeLine('Processing ' + fileCurr)
                 currentDat = self.parseFile(f)
                 # clean up the text
-                currentDat.update({key: val.rstrip('\n') for key, val in currentDat.items()})
-                currentDat['path'] = os.path.abspath(os.path.dirname(fileCurr))
-                self.dat.append(currentDat)
+                print('----OLD----')
+                print(currentDat)
+                currentDatCorr = {}
+
+                currentDatCorr.update({key.rstrip('\r'): val.rstrip('\n').rstrip('\r') for key, val in currentDat.items()})     # TODO: can do better than just rstrip(r)...
+                print('----NEW----')
+                print(currentDatCorr)
+                currentDatCorr['path'] = os.path.abspath(os.path.dirname(fileCurr))
+                self.dat.append(currentDatCorr)
+                self.writeLine('Done.')
 
 
     def parseFile(self, f):
