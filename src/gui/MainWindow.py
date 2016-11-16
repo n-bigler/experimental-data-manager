@@ -178,28 +178,33 @@ class MainWindow(QtGui.QMainWindow):
         while query.next():
             idFound.append(str(query.value(0).toString()))
         print(idFound)
-        
+        print(dat)
+
         entry = (dat['Date'], dat['Project'], dat['path'], dat['Measurement'], dat['Comment']) # already unicode
         # we check if the record exists in the DB
         if len(idFound) == 0:
             # we write a new record to the DB
-            query = QtSql.QSqlQuery()
-            sqlQuery = QtCore.QString("INSERT INTO data(date, project, path, measurement, comment) VALUES (:date,:project,:path,:measurement,:comment)")
-            query.prepare(sqlQuery)
-            query.bindValue(':date', dat['Date'])
-            query.bindValue(':project', dat['Project'])
-            query.bindValue(':path', dat['path'])
-            query.bindValue(':measurement', dat['Measurement'])
-            query.bindValue(':comment', dat['Comment'])
-            query.exec_()
+            conn = sqlite3.connect(self.dbPath)
+            curr = conn.cursor()
+            curr.execute("INSERT INTO data(date, project, path, measurement, comment) VALUES (?, ?, ?, ?, ?)", entry)
+            conn.commit()
+            # query = QtSql.QSqlQuery()
+            # sqlQuery = QtCore.QString("INSERT INTO data(date, project, path, measurement, comment) VALUES (:date,:project,:path,:measurement,:comment)")
+            # query.prepare(sqlQuery)
+            # query.bindValue(':date', dat['Date'])
+            # query.bindValue(':project', dat['Project'])
+            # query.bindValue(':path', dat['path'])
+            # query.bindValue(':measurement', dat['Measurement'])
+            # query.bindValue(':comment', dat['Comment'])
+            # print(query.exec_())
+            # print(query.executedQuery())
             print("Added to DB: ")
             print(dat)
-
 
         else:
             # we need to update one record
             query = QtSql.QSqlQuery()
-            sqlQuery = QtCore.QString("UPDATE data SET date=:date, project=:project, measurement=:measurement, comment=:coment WHERE id=:id")
+            sqlQuery = QtCore.QString("UPDATE data SET date=:date, project=:project, measurement=:measurement, comment=:comment WHERE id=:id")
             query.prepare(sqlQuery)
             query.bindValue(':date', dat['Date'])
             query.bindValue(':project', dat['Project'])
@@ -210,3 +215,4 @@ class MainWindow(QtGui.QMainWindow):
             print("Updated: ")
             print(dat)
 
+        self.dbModel.select()
