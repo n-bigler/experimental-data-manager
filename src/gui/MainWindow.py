@@ -143,15 +143,16 @@ class MainWindow(QtGui.QMainWindow):
 
 
     def updateDB(self, newProject, id):
-        query = QtSql.QSqlQuery()
-        sqlQuery = QtCore.QString("UPDATE data SET project=:project WHERE id=:id")
-        query.prepare(sqlQuery)
-        query.bindValue(':project', newProject)
-        query.bindValue(':id', id)
-        query.exec_()
-        query.lastQuery()
-        self.dbModel.submitAll()
-        self.dbModel.select()
+        print('Not doing shit')
+        # query = QtSql.QSqlQuery()
+        # sqlQuery = QtCore.QString("UPDATE data SET project=:project WHERE id=:id")
+        # query.prepare(sqlQuery)
+        # query.bindValue(':project', newProject)
+        # query.bindValue(':id', id)
+        # query.exec_()
+        # query.lastQuery()
+        # self.dbModel.submitAll()
+        # self.dbModel.select()
 
     def showSyncRootFolderDialog(self):
         syncRFDialog = SyncRootFolderDialog.SyncRootFolderDialog(self)
@@ -168,24 +169,21 @@ class MainWindow(QtGui.QMainWindow):
             self.addToDB(entry)
 
     def addToDB(self, dat):
-        query = QtSql.QSqlQuery()
-        query.prepare(QtCore.QString("SELECT id FROM data WHERE path=:path"))
-        print(dat['path'])
-        query.bindValue(':path', dat['path'])
-        query.exec_()
-        idFound = []
+        conn = sqlite3.connect(self.dbPath)
+        curr = conn.cursor()
+        curr.execute("SELECT id FROM data WHERE path=?", (dat['path'],))
+        
+        # query = QtSql.QSqlQuery()
+        # query.prepare(QtCore.QString("SELECT id FROM data WHERE path=:path"))
+        # print(dat['path'])
+        # query.bindValue(':path', dat['path'])
+        # query.exec_()
+        idFound = curr.fetchall()
 
-        while query.next():
-            idFound.append(str(query.value(0).toString()))
-        print(idFound)
-        print(dat)
-
-        entry = (dat['Date'], dat['Project'], dat['path'], dat['Measurement'], dat['Comment']) # already unicode
         # we check if the record exists in the DB
         if len(idFound) == 0:
+            entry = (dat['Date'], dat['Project'], dat['path'], dat['Measurement'], dat['Comment']) # already unicode
             # we write a new record to the DB
-            conn = sqlite3.connect(self.dbPath)
-            curr = conn.cursor()
             curr.execute("INSERT INTO data(date, project, path, measurement, comment) VALUES (?, ?, ?, ?, ?)", entry)
             conn.commit()
             # query = QtSql.QSqlQuery()
@@ -203,16 +201,21 @@ class MainWindow(QtGui.QMainWindow):
 
         else:
             # we need to update one record
-            query = QtSql.QSqlQuery()
-            sqlQuery = QtCore.QString("UPDATE data SET date=:date, project=:project, measurement=:measurement, comment=:comment WHERE id=:id")
-            query.prepare(sqlQuery)
-            query.bindValue(':date', dat['Date'])
-            query.bindValue(':project', dat['Project'])
-            query.bindValue(':path', dat['path'])
-            query.bindValue(':measurement', dat['Measurement'])
-            query.bindValue(':comment', dat['Comment'])
-            query.exec_()
+            entry = (dat['Date'], dat['Project'], dat['Measurement'], dat['Comment'], idFound[0][0]) # already unicode
+            curr.execute("UPDATE data SET date=?, project=?, measurement=?, comment=? WHERE id=?", entry)
+            conn.commit()
+
+            # query = QtSql.QSqlQuery()
+            # sqlQuery = QtCore.QString("UPDATE data SET date=:date, project=:project, measurement=:measurement, comment=:comment WHERE id=:id")
+            # query.prepare(sqlQuery)
+            # query.bindValue(':date', dat['Date'])
+            # query.bindValue(':project', dat['Project'])
+            # query.bindValue(':path', dat['path'])
+            # query.bindValue(':measurement', dat['Measurement'])
+            # query.bindValue(':comment', dat['Comment'])
+            # query.exec_()
             print("Updated: ")
             print(dat)
 
         self.dbModel.select()
+        conn.close()
